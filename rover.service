@@ -1,0 +1,17 @@
+[Unit]
+Description=rover bluedot systemd service unit file.
+After=network-online.target
+Wants=network-online.target systemd-networkd-wait-online.service
+
+StartLimitIntervalSec=500
+StartLimitBurst=5
+
+[Service]
+Restart=on-failure
+RestartSec=5s
+
+WorkingDirectory=/home/pi/Desktop/rover
+ExecStart=/home/pi/Desktop/rover/bluedotrover/__main__.py
+
+[Install]
+WantedBy=multi-user.target

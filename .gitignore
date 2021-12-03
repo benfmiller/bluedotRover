@@ -1,2 +1,3 @@
 .*Session*.vim
 .my*
+__pycache__
