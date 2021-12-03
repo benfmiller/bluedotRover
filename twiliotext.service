@@ -1,0 +1,17 @@
+[Unit]
+Description=twilio text ip address
+After=network-online.target
+Wants=network-online.target systemd-networkd-wait-online.service
+
+# StartLimitIntervalSec=500
+# StartLimitBurst=5
+
+[Service]
+# Restart=on-failure
+# RestartSec=5s
+
+# WorkingDirectory=/root/twilio
+ExecStart=/root/twilio/twil_texter
+
+[Install]
+WantedBy=multi-user.target
