@@ -3,80 +3,62 @@
 from bluedot import BlueDot
 from signal import pause
 from gpiozero import Robot
+import RPi.GPIO as GPIO
+import time
 
-lfpin = 4
-lbpin = 14
-rfpin = 17
-rbpin = 18
 
-bd = BlueDot()
-robot = Robot(left=(lfpin, lbpin), right=(rfpin, rbpin))
+def spreader(pos):
+    vertical = (pos.y + 1) / 2
+    percentage = round(vertical * 100, 2)
+    print(f"{percentage}% vertical")
+    # pwm.ChangeDutyCycle(percentage)
 
 
 def move(pos):
-    if pos.top:
-        robot.forward(pos.distance)
-        print(f"robot forward: {pos.distance}")
-    elif pos.bottom:
-        robot.backward(pos.distance)
-        print(f"robot backward: {pos.distance}")
-    elif pos.left:
-        robot.left(pos.distance)
-        print(f"robot left: {pos.distance}")
-    elif pos.right:
-        robot.right(pos.distance)
-        print(f"robot right: {pos.distance}")
+    # TODO refactor this
+    if pos.y > 0:
+        robot.forward(pos.y)
+    else:
+        robot.backward(-1 * pos.y)
+
+    if pos.x > 0:
+        robot.right(pos.x)
+    else:
+        robot.left(-1 * pos.x)
+
+    print(f"robot x {pos.x}: robot y {pos.y}")
 
 
 def stop():
     robot.stop()
 
 
-def bluedot_init():
-    bd.when_pressed = move
-    bd.when_moved = move
-    bd.when_released = stop
+lfpin = 17
+lbpin = 18
+rfpin = 22
+rbpin = 23
 
-    pause()
+spreader_pin = 4
 
+bd = BlueDot(cols=3)
+robot = Robot(left=(lfpin, lbpin), right=(rfpin, rbpin))
+bd[1, 0].visible = False
+bd[0, 0].square = True
 
-def main():
-    bluedot_init()
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(spreader_pin, GPIO.OUT)
+pwm = GPIO.PWM(spreader_pin, 100)  # Initialize PWM on pwmPin 100Hz frequency
+dc = 0  # set dc variable to 0 for 0%
+pwm.start(dc)  # Start PWM with 0% duty cycle
 
-if __name__ == "__main__":
-    main()
+bd[0, 0].when_pressed = spreader
+bd[0, 0].when_moved = spreader
 
+bd[2, 0].when_pressed = move
+bd[2, 0].when_moved = move
+bd[2, 0].when_released = stop
 
-# from bluedot import BlueDot
-# from gpiozero import Robot
-# from signal import pause
+pause()
 
-# lfpin = 4
-# lbpin = 14
-# rfpin = 17
-# rbpin = 18
-
-# bd = BlueDot()
-# robot = Robot(left=(lfpin, lbpin), right=(rfpin, rbpin))
-
-
-# def move(pos):
-#     if pos.top:
-#         robot.forward(pos.distance)
-#     elif pos.bottom:
-#         robot.backward(pos.distance)
-#     elif pos.left:
-#         robot.left(pos.distance)
-#     elif pos.right:
-#         robot.right(pos.distance)
-
-
-# def stop():
-#     robot.stop()
-
-
-# bd.when_pressed = move
-# bd.when_moved = move
-# bd.when_released = stop
-
-# pause()
+pwm.stop()  # stop PWM
+GPIO.cleanup()  # resets GPIO ports used back to input mode
