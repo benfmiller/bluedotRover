@@ -1,10 +1,11 @@
 import RPi.GPIO as GPIO
 import time
 
+pin = 22
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(4, GPIO.OUT)
+GPIO.setup(pin, GPIO.OUT)
 
-pwm = GPIO.PWM(4, 100)  # Initialize PWM on pwmPin 100Hz frequency
+pwm = GPIO.PWM(pin, 100)  # Initialize PWM on pwmPin 100Hz frequency
 
 dc = 0  # set dc variable to 0 for 0%
 pwm.start(dc)  # Start PWM with 0% duty cycle
