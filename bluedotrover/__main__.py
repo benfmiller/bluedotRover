@@ -69,14 +69,16 @@ try:
 
         if pos.y > 0:
             if pos.y > 0.2:
-                pwm_forward.ChangeDutyCycle(pos.y * 100)
+                # pwm_forward.ChangeDutyCycle(pos.y * 100)
+                pwm_forward.ChangeDutyCycle(100)
                 # robot.right(pos.y)
                 # robot.right(1)
             else:
                 pwm_forward.ChangeDutyCycle(0)
         else:
             if pos.y < -0.2:
-                pwm_backward.ChangeDutyCycle(-1 * pos.y * 100)
+                # pwm_backward.ChangeDutyCycle(-1 * pos.y * 100)
+                pwm_backward.ChangeDutyCycle(100)
                 # robot.left(1)
                 # robot.left(-1 * pos.y)
             else:
